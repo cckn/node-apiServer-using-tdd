@@ -1,22 +1,22 @@
 {
-  "name": "api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "express": "^4.16.2",
-    "morgan": "^1.9.0"
-  },
-  "devDependencies": {
-    "mocha": "^5.0.0",
-    "should": "^13.2.1",
-    "supertest": "^3.0.0"
-  },
-  "scripts": {
-    "test": "mocha index.spec.js",
-    "start": "node index.js"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "body-parser": "^1.18.2",
+        "express": "^4.16.2",
+        "morgan": "^1.9.0"
+    },
+    "devDependencies": {
+        "mocha": "^5.0.0",
+        "should": "^13.2.1",
+        "supertest": "^3.0.0"
+    },
+    "scripts": {
+        "test": "set NODE_ENV=test&&mocha api/user/user.spec.js",
+        "start": "node bin/www.js"
+    },
+    "author": "",
+    "license": "ISC"
 }
