@@ -8,12 +8,8 @@ const index = function(req, res) {
     const limit = parseInt(req.query.limit, 10);
     const offset = parseInt(req.query.offset, 10);
 
-    if (Number.isNaN(limit)) {
-        return res.status(400).end();
-    }
-    if (Number.isNaN(offset)) {
-        return res.status(400).end();
-    }
+    if (Number.isNaN(limit)) return res.status(400).end();
+    if (Number.isNaN(offset)) return res.status(400).end();
 
     models.User.findAll({
         limit: limit,
@@ -26,28 +22,33 @@ const index = function(req, res) {
 const show = function(req, res) {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) return res.status(400).end();
-    const user = users.filter(user => user.id === id)[0];
-    if (!user) return res.status(404).end();
-    res.json(user);
+
+    models.User.findById(id).then(user => {
+        if (!user) return res.status(404).end();
+        res.json(user);
+    });
 };
 
 const destroy = function(req, res) {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) return res.status(400).end();
-    users = users.filter(user => user.id !== id);
-    res.status(204).end();
+
+    models.User.destroy({ where: { id: id } }).then(user => {
+        res.status(204).end();
+    });
 };
 
 const create = (req, res) => {
     const name = req.body.name;
     if (!name) return res.status(400).end();
-    const isConflict = users.filter(user => user.name === name).length;
-    if (isConflict) return res.status(409).end();
 
-    const id = Date.now();
-    const user = { id, name };
-    users.push(user);
-    res.status(201).json(user);
+    models.User.findOrCreate({ where: { name: name } }).then(user => {
+        const userData = user[0];
+        const isCreated = user[1];
+
+        if (!isCreated) return res.status(409).end();
+        res.status(201).json(userData);
+    });
 };
 
 const update = (req, res) => {
@@ -57,16 +58,19 @@ const update = (req, res) => {
     if (Number.isNaN(id)) return res.status(400).end();
     if (!name) return res.status(400).end();
 
-    const user = users.filter(user => user.id === id)[0];
-    if (!user) return res.status(404).end();
+    models.User.findOne({ where: { name: name } }).then(result => {
+        if (result) return res.status(409).end();
 
-    const isConflict = users.filter(user => user.name === name).length;
+        models.User.update({ name: name }, { where: { id: id } }).then(
+            changed => {
+                if (changed == 0) return res.status(404).end();
 
-    if (isConflict) return res.status(409).end();
-
-    user.name = name;
-
-    res.json(user);
+                models.User.findOne({ where: { id: id } }).then(user => {
+                    res.json(user);
+                });
+            }
+        );
+    });
 };
 
 module.exports = {

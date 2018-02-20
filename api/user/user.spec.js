@@ -3,13 +3,13 @@ const should = require('should');
 const app = require('../../index');
 const models = require('../../models.js');
 
-describe.only('GET /users는', () => {
+const users = [{ name: 'elise' }, { name: 'james' }, { name: 'chris' }];
+
+before(() => models.sequelize.sync({ force: true }));
+before(() => models.User.bulkCreate(users));
+
+describe('GET /users는', () => {
     describe('\n성공시', () => {
-        const users = [{ name: 'elise' }, { name: 'james' }, { name: 'chris' }];
-
-        before(() => models.sequelize.sync({ force: true }));
-        before(() => models.User.bulkCreate(users));
-
         it('유저 객체를 담은 배열로 응답한다. ', done => {
             request(app)
                 .get('/users')
@@ -108,8 +108,6 @@ describe('POST /users', () => {
         body;
 
     describe('성공 시 ', () => {
-        // let name = 'daniel',
-        //     body;
         before(done => {
             request(app)
                 .post('/users')
