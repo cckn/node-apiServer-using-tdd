@@ -16,7 +16,7 @@
         "supertest": "^3.0.0"
     },
     "scripts": {
-        "test": "set NODE_ENV=test&&mocha api/user/user.spec.js",
+        "test": "set NODE_ENV=test&&mocha api/user/user.spec.js -w",
         "start": "nodemon bin/www.js"
     },
     "author": "",
